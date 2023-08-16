@@ -2,6 +2,7 @@
 # FRONT
 
 # Logs
+/front/.vite
 /front/logs
 /front/*.log
 /front/npm-debug.log*
