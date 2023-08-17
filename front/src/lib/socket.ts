@@ -20,7 +20,6 @@ export const utilSocket = new (class UtilSocket {
   }
 
   emitMessage(text: string, cb?: MessageCallback) {
-    console.log(text, this._MESSAGE_EV, socket, import.meta.env.SOCKET_URL);
     socket.emit(this._MESSAGE_EV, text, cb);
   }
 })();

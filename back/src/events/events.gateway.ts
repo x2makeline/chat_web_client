@@ -58,7 +58,7 @@ export class EventsGateway
       this.logger.log(`message ${JSON.stringify({ a })}`);
     });
 
-    this.logger.log('웹소켓 서버 초기화 ✅');
+    this.logger.log('웹소켓 서버 초기화');
   }
 
   async handleConnection(@ConnectedSocket() socket: Socket) {
@@ -75,7 +75,6 @@ export class EventsGateway
     });
     socket.broadcast.emit('message', {
       text: `${socket.id}가 들어왔습니다.`,
-      createdBy: socket.id,
     } as Msg);
 
     await this.prismaService.user.create({
@@ -86,11 +85,10 @@ export class EventsGateway
   }
 
   handleDisconnect(@ConnectedSocket() socket: Socket) {
-    this.logger.log(`${socket.id} 소켓 연결 해제 ❌`);
+    this.logger.log(`${socket.id} 소켓 연결 해제`);
 
     socket.broadcast.emit('message', {
       text: `${socket.id}가 나갔습니다.`,
-      createdBy: socket.id,
     } as Msg);
 
     this.prismaService.user.update({
