@@ -17,7 +17,6 @@ export const ChatWrapper: FC<ChatWrapperProps> = () => {
 
   useEffect(() => {
     const messageHandler = (chat: Chat) => {
-      console.log("messageHandler", chat);
       setChats((prevChats) => [...prevChats, chat]);
     };
 

@@ -28,7 +28,13 @@ export const ChatBox: FC<ChatBoxProps> = ({ list }) => {
   return (
     <Wrap ref={ref}>
       {list.map((chat, i) => (
-        <div key={i}>
+        <div
+          key={i}
+          style={{
+            textAlign:
+              chat.createdBy === utilSocket.socket.id ? "right" : "left",
+          }}
+        >
           <Typography.Text strong>{chat.createdBy}</Typography.Text>
           <br />
           <span>{chat.text}</span>

@@ -6,7 +6,7 @@ const socket = io(import.meta.env.VITE_SOCKET_URL);
 export type MessageCallback = (chat: Chat) => void;
 export const utilSocket = new (class UtilSocket {
   private readonly _MESSAGE_EV = "message";
-
+  socket = socket;
   get id(): string {
     return socket.id;
   }
