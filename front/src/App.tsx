@@ -1,20 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { io } from "socket.io-client";
 import { Button, Form, Input } from "antd";
-
-const socket = io("http://localhost:3000/chat");
+import { utilSocket } from "./lib/socket.ts";
+import { Chat } from "./@types/Chat.ts";
 
 interface Inputs {
   test: string;
 }
 
-interface IChat {
-  username: string;
-  message: string;
-}
-
 const App = () => {
-  const [chats, setChats] = useState<IChat[]>([]);
+  const [chats, setChats] = useState<Chat[]>([]);
   const chatContainerEl = useRef<HTMLDivElement>(null);
 
   // 채팅이 길어지면(chats.length) 스크롤이 생성되므로, 스크롤의 위치를 최근 메시지에 위치시키기 위함
@@ -31,34 +25,37 @@ const App = () => {
 
   // message event listener
   useEffect(() => {
-    const messageHandler = (chat: IChat) =>
+    const messageHandler = (chat: Chat) => {
+      console.log("messageHandler", chat);
       setChats((prevChats) => [...prevChats, chat]);
-    socket.on("message", messageHandler);
+    };
 
+    utilSocket.onMessage(messageHandler);
     return () => {
-      socket.off("message", messageHandler);
+      utilSocket.offMessage(messageHandler);
     };
   }, []);
 
   const onSendMessage = useCallback((e: Inputs) => {
     console.log("onSendMessage", e);
-    socket.emit("message", e.test, (chat: IChat) => {
+    utilSocket.emitMessage(e.test, (chat: Chat) => {
+      console.log("emitMessage", chat);
       setChats((prevChats) => [...prevChats, chat]);
     });
   }, []);
 
   return (
     <>
-      <h1>{`WebSocket Chat : ${socket.id}`}</h1>
+      <h1>{`WebSocket Chat : ${utilSocket.id}`}</h1>
       <div ref={chatContainerEl}>
         {chats.map((chat, index) => (
           <div key={index}>
-            <div className="message">{`${chat.username} : ${chat.message}`}</div>
+            <div className="message">{`${chat.createdBy} : ${chat.text}`}</div>
           </div>
         ))}
       </div>
       <Form<Inputs> onFinish={onSendMessage}>
-        <Form.Item name={"test"}>
+        <Form.Item name={"test"} rules={[{ required: true, message: "메" }]}>
           <Input type="text" />
         </Form.Item>
         <Form.Item>

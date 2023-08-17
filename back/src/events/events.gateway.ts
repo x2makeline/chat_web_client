@@ -13,6 +13,12 @@ import { Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import dayjs from 'dayjs';
 
+interface Msg {
+  text: string;
+  createdBy?: string;
+  createdAt: number;
+}
+
 @WebSocketGateway({
   namespace: 'chat',
   cors: {
@@ -44,15 +50,33 @@ export class EventsGateway
     this.nsp.adapter.on('delete-room', (roomName) => {
       this.logger.log(`"Room:${roomName}"이 삭제되었습니다.`);
     });
+    this.nsp.on('message', (a) => {
+      this.logger.log(`message ${JSON.stringify({ a })}`);
+    });
+
+    this.nsp.adapter.on('message', (a) => {
+      this.logger.log(`message ${JSON.stringify({ a })}`);
+    });
 
     this.logger.log('웹소켓 서버 초기화 ✅');
   }
 
   async handleConnection(@ConnectedSocket() socket: Socket) {
     this.logger.log(`${socket.id} 소켓 연결`);
-    socket.broadcast.emit('message', {
-      message: `${socket.id}가 들어왔습니다.`,
+
+    socket.on('message', async (message) => {
+      await this.prismaService.message.create({
+        data: {
+          createdUserId: socket.id,
+          text: message || '',
+          createdAt: dayjs().toDate(),
+        },
+      });
     });
+    socket.broadcast.emit('message', {
+      text: `${socket.id}가 들어왔습니다.`,
+      createdBy: socket.id,
+    } as Msg);
 
     await this.prismaService.user.create({
       data: {
@@ -61,14 +85,15 @@ export class EventsGateway
     });
   }
 
-  async handleDisconnect(@ConnectedSocket() socket: Socket) {
+  handleDisconnect(@ConnectedSocket() socket: Socket) {
     this.logger.log(`${socket.id} 소켓 연결 해제 ❌`);
 
     socket.broadcast.emit('message', {
-      message: `${socket.id}가 나갔습니다.`,
-    });
+      text: `${socket.id}가 나갔습니다.`,
+      createdBy: socket.id,
+    } as Msg);
 
-    await this.prismaService.user.update({
+    this.prismaService.user.update({
       data: {
         deletedAt: dayjs().toDate(),
       },
@@ -82,11 +107,15 @@ export class EventsGateway
   handleMessage(
     @ConnectedSocket() socket: Socket,
     @MessageBody() message: string,
-  ) {
-    socket.broadcast.emit('message', { username: socket.id, message });
-    this.logger.log(
-      `message ${JSON.stringify({ username: socket.id, message })}`,
-    );
-    return { username: socket.id, message };
+  ): Msg {
+    console.log('handleMessage', message);
+    const msg: Msg = {
+      text: message,
+      createdBy: socket.id,
+      createdAt: dayjs().valueOf(),
+    };
+    socket.broadcast.emit('message', msg);
+
+    return msg;
   }
 }
