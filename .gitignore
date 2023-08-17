@@ -3,7 +3,7 @@
 
 # Logs
 /front/.vite
-/front/logs
+/front/log
 /front/*.log
 /front/npm-debug.log*
 /front/yarn-debug.log*

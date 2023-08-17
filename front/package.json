@@ -11,9 +11,14 @@
   },
   "dependencies": {
     "antd": "^5.8.3",
+    "builder-pattern": "^2.2.0",
+    "clsx": "^2.0.0",
+    "dayjs": "^1.11.9",
     "lodash": "^4.17.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-use-websocket": "^4.3.1",
+    "socket.io-client": "^4.7.2",
     "styled-components": "^6.0.7"
   },
   "devDependencies": {
