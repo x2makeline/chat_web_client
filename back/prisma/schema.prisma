@@ -11,16 +11,28 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique
-  createdAt DateTime @default(now())
-  chat      Chat[]
+  id        String    @id
+  createdAt DateTime  @default(now())
+  deletedAt DateTime?
+  chat      Message[]
 }
 
-model Chat {
+enum NoticeType {
+  CONNECT
+  UNCONNECT
+}
+
+model Notice {
+  id        Int        @id @default(autoincrement())
+  text      String     @db.Text
+  type      NoticeType
+  createdAt DateTime   @default(now())
+}
+
+model Message {
   id            Int      @id @default(autoincrement())
   text          String   @db.Text
   createdUser   User     @relation(fields: [createdUserId], references: [id])
   createdAt     DateTime @default(now())
-  createdUserId Int
+  createdUserId String
 }

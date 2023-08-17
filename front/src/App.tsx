@@ -1,4 +1,3 @@
-import classNames from "clsx";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { Button, Form, Input } from "antd";
@@ -50,24 +49,11 @@ const App = () => {
 
   return (
     <>
-      <h1>WebSocket Chat</h1>
+      <h1>{`WebSocket Chat : ${socket.id}`}</h1>
       <div ref={chatContainerEl}>
         {chats.map((chat, index) => (
-          <div
-            key={index}
-            className={classNames({
-              my_message: socket.id === chat.username,
-              alarm: !chat.username,
-            })}
-          >
-            <span>
-              {chat.username
-                ? socket.id === chat.username
-                  ? ""
-                  : chat.username
-                : ""}
-            </span>
-            <div className="message">{chat.message}</div>
+          <div key={index}>
+            <div className="message">{`${chat.username} : ${chat.message}`}</div>
           </div>
         ))}
       </div>

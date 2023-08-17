@@ -10,6 +10,8 @@ import {
 } from '@nestjs/websockets';
 import { Namespace, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+import dayjs from 'dayjs';
 
 @WebSocketGateway({
   namespace: 'chat',
@@ -20,6 +22,8 @@ import { Logger } from '@nestjs/common';
 export class EventsGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
+  constructor(private readonly prismaService: PrismaService) {}
+
   private logger = new Logger('Gateway');
   @WebSocketServer() nsp: Namespace;
 
@@ -44,16 +48,34 @@ export class EventsGateway
     this.logger.log('웹소켓 서버 초기화 ✅');
   }
 
-  handleConnection(@ConnectedSocket() socket: Socket) {
+  async handleConnection(@ConnectedSocket() socket: Socket) {
     this.logger.log(`${socket.id} 소켓 연결`);
-
     socket.broadcast.emit('message', {
       message: `${socket.id}가 들어왔습니다.`,
     });
+
+    await this.prismaService.user.create({
+      data: {
+        id: socket.id,
+      },
+    });
   }
 
-  handleDisconnect(@ConnectedSocket() socket: Socket) {
+  async handleDisconnect(@ConnectedSocket() socket: Socket) {
     this.logger.log(`${socket.id} 소켓 연결 해제 ❌`);
+
+    socket.broadcast.emit('message', {
+      message: `${socket.id}가 나갔습니다.`,
+    });
+
+    await this.prismaService.user.update({
+      data: {
+        deletedAt: dayjs().toDate(),
+      },
+      where: {
+        id: socket.id,
+      },
+    });
   }
 
   @SubscribeMessage('message')
