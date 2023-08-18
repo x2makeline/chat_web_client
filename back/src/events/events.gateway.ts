@@ -10,7 +10,7 @@ import {
 } from '@nestjs/websockets';
 import { Namespace, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+//import { PrismaService } from '../prisma/prisma.service';
 import dayjs from 'dayjs';
 
 interface Msg {
@@ -28,7 +28,7 @@ interface Msg {
 export class EventsGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
-  constructor(private readonly prismaService: PrismaService) {}
+  // constructor(private readonly prismaService: PrismaService) {}
 
   private logger = new Logger('Gateway');
   @WebSocketServer() nsp: Namespace;
@@ -65,24 +65,24 @@ export class EventsGateway
     this.logger.log(`${socket.id} 소켓 연결`);
 
     socket.on('message', async (message) => {
-      await this.prismaService.message.create({
-        data: {
-          createdUserId: socket.id,
-          text: message || '',
-          createdAt: dayjs().toDate(),
-        },
-      });
+      // await this.prismaService.message.create({
+      //   data: {
+      //     createdUserId: socket.id,
+      //     text: message || '',
+      //     createdAt: dayjs().toDate(),
+      //   },
+      // });
     });
     socket.broadcast.emit('message', {
       text: `${socket.id}가 들어왔습니다.`,
       createdBy: socket.id,
     } as Msg);
 
-    await this.prismaService.user.create({
-      data: {
-        id: socket.id,
-      },
-    });
+    // await this.prismaService.user.create({
+    //   data: {
+    //     id: socket.id,
+    //   },
+    // });
   }
 
   handleDisconnect(@ConnectedSocket() socket: Socket) {
@@ -93,14 +93,14 @@ export class EventsGateway
       createdBy: socket.id,
     } as Msg);
 
-    this.prismaService.user.update({
-      data: {
-        deletedAt: dayjs().toDate(),
-      },
-      where: {
-        id: socket.id,
-      },
-    });
+    // this.prismaService.user.update({
+    //   data: {
+    //     deletedAt: dayjs().toDate(),
+    //   },
+    //   where: {
+    //     id: socket.id,
+    //   },
+    // });
   }
 
   @SubscribeMessage('message')
