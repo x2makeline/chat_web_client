@@ -5,7 +5,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { EventsModule } from './events/events.module';
 
 @Module({
-  //imports: [PrismaModule, EventsModule],
+  // imports: [PrismaModule, EventsModule],
   imports: [EventsModule],
   controllers: [AppController],
   providers: [AppService],
