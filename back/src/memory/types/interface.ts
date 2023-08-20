@@ -1,19 +1,19 @@
 import { z } from 'zod';
 import {
-    ChatMessageSchema,
-    JoinRoomSchema,
-    KickUserSchema,
-    RoomNameSchema,
-    RoomSchema,
-    SocketIdSchema,
-    UserIdSchema,
-    UserNameSchema,
-    UserSchema,
-    ServerToClientEventsSchema,
-    ClientToServerEventsSchema,
+  ChatMessageSchema,
+  JoinRoomSchema,
+  KickUserSchema,
+  RoomNameSchema,
+  RoomSchema,
+  SocketIdSchema,
+  UserIdSchema,
+  UserNameSchema,
+  UserSchema,
+  ServerToClientEventsSchema,
+  ClientToServerEventsSchema,
 } from './schema';
 
-export type UserId = z.infer<typeof UserIdSchema>;  // typeof UserIdSchema
+export type UserId = z.infer<typeof UserIdSchema>; // typeof UserIdSchema
 export type UserName = z.infer<typeof UserNameSchema>;
 export type SocketId = z.infer<typeof SocketIdSchema>;
 export type User = z.infer<typeof UserSchema>;
