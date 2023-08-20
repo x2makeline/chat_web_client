@@ -5,6 +5,7 @@ import {
   WebSocketServer,
   OnGatewayConnection,
   OnGatewayDisconnect,
+  OnGatewayInit,
 } from '@nestjs/websockets';
 import { Logger, UseGuards, UsePipes } from '@nestjs/common';
 // import {
@@ -27,19 +28,49 @@ import { UserService } from '../user/user.service';
 // import { WsThrottlerGuard } from './guards/throttler.guard';
 // import { Throttle } from '@nestjs/throttler';
 
-@WebSocketGateway({})
-export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
+@WebSocketGateway(8080)
+export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+
+  @WebSocketServer()
+  server: Server;
+
   constructor(
     private roomService: RoomService,
     private userService: UserService,
   ) {}
+
+
+  private logger = new Logger('ChatGateway');
+
+  async handleConnection(socket: Socket): Promise<void> {
+    this.logger.log(`Socket connected: ${socket.id}`);
+  }
+
+  async handleDisconnect(socket: Socket): Promise<void> {
+    this.logger.log(`Socket handleDisconnect: ${socket.id}`);
+    // const user = await this.roomService.getFirstInstanceOfUser(socket.id);
+    // if (user !== 'Not Exists') {
+    //   await this.userService.removeUserById(user.userId);
+    // }
+    // await this.roomService.removeUserFromAllRooms(socket.id);
+    // this.logger.log(`Socket disconnected: ${socket.id}`);
+  }
+
+  afterInit(server: any): any {
+    this.logger.log(`Socket afterInit: ${server}`);
+  }
+
+  @SubscribeMessage('events')
+  onEvent(client: any, data: any) {
+    return { event: 'events', data: 'test' };
+  }
+
 
   // @WebSocketServer() server: Server = new Server<
   //   ServerToClientEvents,
   //   ClientToServerEvents
   // >();
 
-  private logger = new Logger('ChatGateway');
   //
   // @Throttle(10, 30)
   // @UseGuards(ChatPoliciesGuard<Message>, WsThrottlerGuard)
@@ -94,16 +125,5 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   //   return true;
   // }
   //
-  async handleConnection(socket: Socket): Promise<void> {
-    this.logger.log(`Socket connected: ${socket.id}`);
-  }
-  //
-  async handleDisconnect(socket: Socket): Promise<void> {
-    // const user = await this.roomService.getFirstInstanceOfUser(socket.id);
-    // if (user !== 'Not Exists') {
-    //   await this.userService.removeUserById(user.userId);
-    // }
-    // await this.roomService.removeUserFromAllRooms(socket.id);
-    // this.logger.log(`Socket disconnected: ${socket.id}`);
-  }
+
 }

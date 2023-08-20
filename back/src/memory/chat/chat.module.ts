@@ -7,8 +7,8 @@ import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
-    RoomModule,
-    UserModule,
+    // RoomModule,
+    // UserModule,
     // CaslModule,
     // ThrottlerModule.forRoot({ limit: 5, ttl: 60 }),
   ],
