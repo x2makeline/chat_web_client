@@ -34,10 +34,10 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   @WebSocketServer()
   server: Server;
 
-  constructor(
-    private roomService: RoomService,
-    private userService: UserService,
-  ) {}
+  // constructor(
+  //   private roomService: RoomService,
+  //   private userService: UserService,
+  // ) {}
 
 
   private logger = new Logger('ChatGateway');
