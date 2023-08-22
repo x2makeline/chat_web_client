@@ -23,12 +23,12 @@ import { ZodValidationPipe } from '../pipes/zod.pipe';
 //   JoinRoomSchema,
 //   KickUserSchema,
 // } from '../../shared/schemas/chat.schema';
-import { UserService } from '../user/user.service';
+// import { UserService } from '../user/user.service';
 // import { ChatPoliciesGuard } from './guards/chat.guard';
 // import { WsThrottlerGuard } from './guards/throttler.guard';
 // import { Throttle } from '@nestjs/throttler';
 
-@WebSocketGateway(8080)
+@WebSocketGateway(18080)
 export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
 
   @WebSocketServer()
@@ -43,11 +43,11 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   private logger = new Logger('ChatGateway');
 
   async handleConnection(socket: Socket): Promise<void> {
-    this.logger.log(`Socket connected: ${socket.id}`);
+    this.logger.log(`Socket connected:` , socket);
   }
 
   async handleDisconnect(socket: Socket): Promise<void> {
-    this.logger.log(`Socket handleDisconnect: ${socket.id}`);
+    this.logger.log(`Socket handleDisconnect: ${socket}`);
     // const user = await this.roomService.getFirstInstanceOfUser(socket.id);
     // if (user !== 'Not Exists') {
     //   await this.userService.removeUserById(user.userId);
