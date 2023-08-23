@@ -9,7 +9,6 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class UserService {
   // private users: User[] = [];
-
   // async addUser(user: User) {
   //   const findUser = await this.getUserById(user.userId);
   //   if (findUser === 'Not Exists') {
@@ -17,7 +16,6 @@ export class UserService {
   //     this.users.push(newUser);
   //   }
   // }
-  //
   // async getUserById(userId: User['userId']): Promise<User | 'Not Exists'> {
   //   const searchForUserIndex = await this.getUserIndexById(userId);
   //   if (searchForUserIndex === -1) {
